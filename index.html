@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>html,body{margin:0}</style>
+<title>Sherwin & Juliet RSVP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&family=Lato:wght@400;700&family=Mea+Culpa&display=swap" rel="stylesheet">
+<style>
+/* Layout: champagne draped-curtain backdrop with one cream-gold card in the middle. The card walks a guest through lookup, reply, party, message, confirmation.
+   Single committed look (champagne paper, antique gold), so every color is set explicitly. */
+:root {
+  --curtain-a: #e6d8b8;
+  --curtain-fold: rgba(122, 96, 40, .20);
+  --curtain-light: rgba(255, 251, 236, .38);
+  --paper: #fcf8ec;
+  --paper-edge: #d9c690;
+  --ink: #4a3d2e;
+  --ink-soft: #7a6248;
+  --field: #fffdf6;
+  --gold: #b8975f;
+  --gold-deep: #85693f;
+  --gold-deeper: #6e5530;
+  --on-gold: #fffdf8;
+  --err: #9a3b2b;
+  --script: "Mea Culpa", "Brush Script MT", cursive;
+  --display: "Cormorant Garamond", Georgia, serif;
+  --body: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --ui: "Lato", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body {
+  background: var(--curtain-a);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 20px;
+  line-height: 1.5;
+  font-weight: 500;
+  padding-inline: 16px;
+  padding-block: 0;
+  overflow-x: hidden;
+}
+.stage {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+  padding-block: 32px;
+  margin-inline: -16px; padding-inline: 16px;
+  background:
+    repeating-linear-gradient(90deg,
+      transparent 0, transparent 38px,
+      var(--curtain-fold) 62px, transparent 92px,
+      var(--curtain-light) 112px, transparent 140px),
+    linear-gradient(180deg, #efe3c6, #e1d0a6);
+}
+.heading { text-align: center; }
+.names { font-family: var(--script); font-weight: 400; margin: 0; line-height: 1.1; font-size: clamp(2.8rem, 12vw, 4rem); color: var(--gold-deep); text-wrap: balance; }
+.names .amp { margin-inline: .25em; }
+.when { margin: 8px 0 0; letter-spacing: .3em; text-transform: uppercase; font-family: var(--ui); font-size: .72rem; font-weight: 700; color: var(--ink-soft); }
+
+.btn {
+  font-family: var(--ui); font-weight: 700; letter-spacing: .2em; text-transform: uppercase; font-size: .78rem;
+  background: var(--gold-deep); color: var(--on-gold); border: 1px solid var(--gold-deep);
+  padding: 15px 28px; cursor: pointer; width: 100%;
+}
+.btn:hover { background: var(--gold-deeper); }
+.btn:disabled { background: #b5a574; border-color: #b5a574; cursor: default; }
+.btn:focus-visible, .linkbtn:focus-visible, .choice:focus-visible, .person:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+.linkbtn { background: none; border: 0; font: inherit; font-style: italic; color: var(--ink-soft); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: 4px; }
+
+.card {
+  position: relative; width: 100%; max-width: 440px; background: var(--paper);
+  border: 1px solid var(--paper-edge); padding: 36px 28px 26px; text-align: center;
+  box-shadow: 0 18px 50px rgba(92, 70, 24, .25);
+  outline: 1px solid var(--paper-edge); outline-offset: -8px;
+  animation: rise .35s ease both;
+}
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .card { animation: none; } }
+.flourish { width: 46px; height: 12px; margin: 0 auto 10px; display: block; color: var(--gold); }
+h2 { font-family: var(--display); font-weight: 400; font-size: 1.85rem; letter-spacing: .03em; margin: 0 0 8px; line-height: 1.2; text-wrap: balance; }
+.sub { margin: 0 0 22px; color: var(--ink-soft); font-size: 1rem; line-height: 1.55; }
+.stack { display: flex; flex-direction: column; gap: 12px; text-align: left; }
+label.lbl { font-style: italic; color: var(--ink-soft); font-size: .95rem; margin-bottom: -6px; }
+input[type=text], textarea {
+  font: inherit; width: 100%; background: var(--field); color: var(--ink);
+  border: 1px solid var(--paper-edge); padding: 13px 14px; border-radius: 0;
+}
+textarea { min-height: 112px; resize: vertical; }
+input::placeholder, textarea::placeholder { color: #aa9a70; }
+input:focus, textarea:focus { outline: 2px solid var(--gold); outline-offset: 0; border-color: var(--gold); }
+.hint { font-style: italic; color: var(--ink-soft); font-size: .92rem; margin: 0; text-align: left; }
+.err { color: var(--err); font-style: italic; font-size: .95rem; margin: 0; text-align: left; }
+.foot { margin: 14px 0 0; }
+
+.person, .choice {
+  display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; cursor: pointer;
+  background: var(--field); border: 1px solid var(--paper-edge); padding: 14px 16px; font: inherit; color: var(--ink);
+}
+.person:hover, .choice:hover { border-color: var(--gold); }
+.person .meta, .choice .meta { flex: 1; min-width: 0; }
+.person .meta b, .choice .meta b { display: block; font-weight: 500; overflow-wrap: anywhere; }
+.person .meta small, .choice .meta small { display: block; font-style: italic; color: var(--ink-soft); font-size: .88rem; }
+.chev { color: var(--ink-soft); font-size: 1.4rem; }
+.choice[aria-pressed="true"] { border-color: var(--gold-deep); box-shadow: inset 0 0 0 1px var(--gold-deep); }
+.ico { width: 26px; height: 26px; flex: none; color: var(--ink-soft); }
+.choice[aria-pressed="true"] .ico { color: var(--gold-deep); }
+
+.sum { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; text-align: left; margin: 0 0 20px; padding: 14px 16px; background: var(--field); border: 1px solid var(--paper-edge); font-size: 1rem; }
+.sum dt { font-family: var(--ui); font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); padding-top: .3em; font-weight: 700; }
+.sum dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+a.btn.linkout { display: block; text-align: center; text-decoration: none; }
+.spinner { width: 34px; height: 34px; margin: 4px auto 14px; border-radius: 50%; border: 1px solid var(--paper-edge); border-top-color: var(--gold); animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 3s; } }
+.tick { width: 76px; height: 76px; margin: 0 auto 14px; display: block; color: var(--gold); }
+.tick path { stroke-dasharray: 40; stroke-dashoffset: 0; animation: draw .6s .15s ease both; }
+@keyframes draw { from { stroke-dashoffset: 40; } }
+</style>
+
+</head>
+<body>
+<main class="stage">
+  <div class="heading" id="heading" hidden></div>
+  <div id="root"></div>
+</main>
+
+<script>
+/* ---------- CONFIG: edit these ---------- */
+const CONFIG = {
+  // Leave blank to hide. Example: partnerA: "Alexandra", partnerB: "Benedict", dateText: "January 8, 2027"
+  partnerA: "Sherwin",
+  partnerB: "Juliet",
+  dateText: "March 14, 2027",
+  replyBy: "",
+
+  // Paste your Google Apps Script web app URL (ends in /exec) here. Every reply is written to one Google Sheet.
+  endpoint: "https://script.google.com/macros/s/AKfycbxg5gZc9K3iEkisXWM7Z76_xWxvfEyDVLExN7SRdLnwzsT13UTSDfNsA86mJa3LdpuS/exec",
+
+  // seats = total seats on the invitation, counting the guest named.
+  guests: [
+    { name: "Samatha Marie Reyes", seats: 2 },
+    { name: "Jillian Chamberlaine", seats: 1 },
+    { name: "Jamie Park", seats: 1 },
+    { name: "John Lemuel Francisco", seats: 2 },
+    { name: "Katherine Villanueva", seats: 1 },
+    { name: "Paul Christian Gonzales", seats: 2 },
+    { name: "Marisol Sanggalang", seats: 2 },
+    { name: "Liezel Reyes", seats: 2 },
+    { name: "Danica Dela Pena", seats: 1 },
+    { name: "Jovilyn Miranda", seats: 2 },
+    { name: "Cherilyn Lucente", seats: 1 },
+    { name: "Jessevel Torreon", seats: 1 },
+    { name: "Roberto Reyes", seats: 1 },
+    { name: "Ryan Habolin", seats: 1 },
+    { name: "Regie Santos", seats: 1 },
+    { name: "Eden Nabarte", seats: 1 },
+    { name: "Laymark Mendoza", seats: 1 },
+    { name: "Ellen Dizon", seats: 1 },
+    { name: "Jan Kevin Aringo", seats: 2 },
+    { name: "Dory Dy", seats: 4 },
+    { name: "Julieta Aringo", seats: 1 },
+    { name: "Isabella Viktoria Aringo", seats: 1 },
+    { name: "Jenny Rivera", seats: 1 },
+    { name: "Isabel Rivera", seats: 1 },
+    { name: "Lawrence Benedict Rivera", seats: 1 },
+    { name: "Ofelia Pacheco", seats: 2 },
+    { name: "Jonathan Pacheco", seats: 2 },
+    { name: "Ciarah Pacheco", seats: 2 },
+    { name: "Charlene Pacheco", seats: 2 },
+    { name: "Jesus Aringo", seats: 1 },
+    { name: "Janelle Aringo", seats: 1 },
+    { name: "Elena Aringo", seats: 1 },
+    { name: "Patrick Samson", seats: 2 },
+    { name: "Sammy Rivera", seats: 4 },
+    { name: "John Bryan Aringo", seats: 3 },
+    { name: "Rina Aringo", seats: 7 },
+    { name: "Nika Kho", seats: 2 },
+    { name: "Jap Vilano", seats: 3 },
+    { name: "Amirdon Ong", seats: 3 },
+    { name: "Hojo Makoto", seats: 3 },
+    { name: "Edward Chisholm", seats: 2 },
+    { name: "Grace Ormsby", seats: 2 },
+    { name: "Libby Hamilton", seats: 1 },
+    { name: "Lisa Jackson", seats: 3 },
+    { name: "Anton Peralta", seats: 2 },
+    { name: "Eamon Graziano", seats: 2 }
+  ]
+};
+/* ---------------------------------------- */
+
+const root = document.getElementById("root");
+const $ = (s) => document.querySelector(s);
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+function esc(s) { return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function norm(s) { return String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, " ").trim(); }
+
+const couple = CONFIG.partnerA && CONFIG.partnerB ? `${CONFIG.partnerA} and ${CONFIG.partnerB}` : "the couple";
+if (CONFIG.partnerA && CONFIG.partnerB || CONFIG.dateText) {
+  const h = $("#heading"); h.hidden = false;
+  h.innerHTML = (CONFIG.partnerA && CONFIG.partnerB ? `<h1 class="names">${esc(CONFIG.partnerA)}<span class="amp">&amp;</span>${esc(CONFIG.partnerB)}</h1>` : "") +
+    (CONFIG.dateText ? `<p class="when">${esc(CONFIG.dateText)}</p>` : "");
+}
+
+const FLOURISH = `<svg class="flourish" viewBox="0 0 46 12" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M1 8c6 0 8-5 14-5s6 6 8 6 2-6 8-6 8 5 14 5"/></svg>`;
+let S = fresh();
+function fresh() { return { step: "search", query: "", matches: [], guest: null, attending: null, party: [], message: "", error: "" }; }
+
+function shell(inner) { root.innerHTML = `<div class="card" role="region" aria-live="polite">${inner}</div>`; }
+
+async function submitRsvp(payload) {
+  if (!CONFIG.endpoint) return false;
+  try {
+    await fetch(CONFIG.endpoint, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
+    return true;
+  } catch (e) { return false; }
+}
+
+function render() {
+  const g = S.guest;
+  const extra = g ? g.seats - 1 : 0;
+  const first = g ? g.name.split(" ")[0] : "";
+  const joinLine = CONFIG.dateText ? `Please let us know if you can join us on ${esc(CONFIG.dateText)}.` : "Please let us know if you can join us.";
+
+  if (S.step === "search") {
+    shell(`${FLOURISH}<h2>Find your invitation</h2>
+      <p class="sub">Type your first or last name as it appears on your invitation.</p>
+      <form class="stack" id="f" autocomplete="off">
+        <input type="text" id="q" placeholder="Your name" value="${esc(S.query)}" aria-label="Your name" enterkeyhint="search">
+        ${S.error ? `<p class="err" role="alert">${esc(S.error)}</p>` : ""}
+        <button class="btn" type="submit">Search</button>
+      </form>`);
+    const q = $("#q");
+    $("#f").onsubmit = (e) => {
+      e.preventDefault();
+      const term = norm(q.value);
+      S.query = q.value;
+      if (term.length < 2) { S.error = "Enter at least two letters of your name."; return render(); }
+      S.error = ""; S.step = "loading"; render();
+      setTimeout(() => {
+        S.matches = CONFIG.guests.filter((x) => norm(x.name).includes(term));
+        if (!S.matches.length) { S.step = "search"; S.error = "We could not find that name. Check the spelling or try your last name."; }
+        else S.step = "match";
+        render();
+      }, 800);
+    };
+  }
+
+  else if (S.step === "loading") {
+    shell(`<div class="spinner"></div><h2>Looking for you</h2><p class="sub">Checking the guest list. This can take a few seconds.</p>`);
+  }
+
+  else if (S.step === "match") {
+    const n = S.matches.length;
+    shell(`<h2>Is this you?</h2>
+      <p class="sub">${n === 1 ? "We found one match. Tap your name to continue." : `We found ${n} matches. Tap your name to continue.`}</p>
+      <div class="stack">${S.matches.map((m, i) => `<button class="person" type="button" data-i="${i}">
+        <span class="meta"><b>${esc(m.name)}</b><small>${m.seats} ${m.seats === 1 ? "seat" : "seats"} reserved</small></span><span class="chev">&rsaquo;</span></button>`).join("")}</div>
+      <p class="foot"><button class="linkbtn" type="button" id="again">Search again</button></p>`);
+    root.querySelectorAll(".person").forEach((b) => b.onclick = () => {
+      S.guest = S.matches[+b.dataset.i];
+      const prev = store.get("rsvp:" + S.guest.name);
+      if (prev) { S.attending = prev.attending; S.party = prev.party || []; S.message = prev.message || ""; }
+      S.step = "reply"; render();
+    });
+    $("#again").onclick = () => { S.step = "search"; render(); };
+  }
+
+  else if (S.step === "reply") {
+    shell(`<h2>Hello, ${esc(g.name)}</h2>
+      <p class="sub">${joinLine}${CONFIG.replyBy ? ` Kindly reply by ${esc(CONFIG.replyBy)}.` : ""}</p>
+      <div class="stack">
+        <button class="choice" type="button" data-v="yes" aria-pressed="${S.attending === true}">
+          <svg class="ico" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1"><circle cx="13" cy="13" r="11.5"/><path d="M8 13.5l3.5 3.5L18 10"/></svg>
+          <span class="meta"><b>Joyfully attending</b><small>We will be there</small></span></button>
+        <button class="choice" type="button" data-v="no" aria-pressed="${S.attending === false}">
+          <svg class="ico" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1"><circle cx="13" cy="13" r="11.5"/><path d="M9 9l8 8M17 9l-8 8"/></svg>
+          <span class="meta"><b>Regretfully declining</b><small>We cannot make it</small></span></button>
+      </div>
+      <p class="foot"><button class="linkbtn" type="button" id="again">Not you? Search again</button></p>`);
+    root.querySelectorAll(".choice").forEach((b) => b.onclick = () => {
+      S.attending = b.dataset.v === "yes";
+      S.step = (S.attending && extra > 0) ? "party" : "message";
+      render();
+    });
+    $("#again").onclick = () => { S = fresh(); render(); };
+  }
+
+  else if (S.step === "party") {
+    const fields = Array.from({ length: extra }, (_, i) => `<label class="lbl" for="p${i}">Additional guest ${i + 1}</label>
+      <input type="text" id="p${i}" placeholder="Full name" value="${esc(S.party[i] || "")}">`).join("");
+    shell(`<h2>Your party</h2>
+      <p class="sub">Your invitation includes ${g.seats} seats, counting you. Please add the ${extra === 1 ? "name of your guest" : `names of your ${extra} guests`}.</p>
+      <form class="stack" id="f" autocomplete="off">${fields}
+        <p class="hint">Leave a field blank if the seat will not be used.</p>
+        <button class="btn" type="submit">Continue</button></form>
+      <p class="foot"><button class="linkbtn" type="button" id="back">Back</button></p>`);
+    $("#f").onsubmit = (e) => {
+      e.preventDefault();
+      S.party = Array.from({ length: extra }, (_, i) => $("#p" + i).value.trim());
+      S.step = "message"; render();
+    };
+    $("#back").onclick = () => { S.step = "reply"; render(); };
+  }
+
+  else if (S.step === "message") {
+    shell(`<h2>Words for the couple</h2>
+      <p class="sub">Leave a message or a wish for ${esc(couple)}. This is optional.</p>
+      <form class="stack" id="f">
+        <textarea id="m" placeholder="Your message" aria-label="Your message">${esc(S.message)}</textarea>
+        ${S.error ? `<p class="err" role="alert">${esc(S.error)}</p>` : ""}
+        <button class="btn" type="submit" id="send">Send RSVP</button>
+      </form>
+      <p class="foot"><button class="linkbtn" type="button" id="back">Back</button></p>`);
+    $("#back").onclick = () => { S.message = $("#m").value; S.error = ""; S.step = (S.attending && extra > 0) ? "party" : "reply"; render(); };
+    $("#f").onsubmit = async (e) => {
+      e.preventDefault();
+      S.message = $("#m").value.trim();
+      const btn = $("#send"); btn.disabled = true; btn.textContent = "Sending…";
+      const payload = {
+        name: g.name, seats: g.seats, attending: S.attending,
+        party: S.attending ? S.party.filter(Boolean) : [], message: S.message,
+        submittedAt: new Date().toISOString()
+      };
+      const ok = await submitRsvp(payload);
+      if (!ok) { S.error = "We could not send your RSVP. Check your connection and try again."; return render(); }
+      store.set("rsvp:" + g.name, payload);
+      S.error = ""; S.step = "done"; render();
+    };
+  }
+
+  else if (S.step === "done") {
+    const yes = S.attending;
+    shell(`<svg class="tick" viewBox="0 0 76 76" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="38" cy="38" r="35"/><path d="M24 39l10 10 19-21"/></svg>
+      <h2>${yes ? `See you there, ${esc(first)}` : `We will miss you, ${esc(first)}`}</h2>
+      <p class="sub">${yes ? `Your RSVP has been received. We cannot wait to celebrate with you${CONFIG.dateText ? ` on ${esc(CONFIG.dateText)}` : ""}.` : "Your RSVP has been received. Thank you for letting us know, and for your love and good wishes."}</p>
+      <button class="btn" type="button" id="done">Done</button>`);
+    $("#done").onclick = () => { S = fresh(); render(); };
+  }
+}
+render();
+</script>
+
+</body>
+</html>
